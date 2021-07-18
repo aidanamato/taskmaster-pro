@@ -50,11 +50,9 @@ var saveTasks = function() {
 var auditTask = function(taskEl) {
   // get date from task element
   var date = taskEl.find("span").text().trim();
-  console.log(date);
 
   // convert date to moment object at 5:00 P.M.
   var time = moment(date, "L").set("hour", 17);
-  console.log(time);
 
   // remove any old classes from element
   taskEl.removeClass("list-group-item-warning list-group-item-danger");
@@ -220,16 +218,18 @@ $(".card .list-group").sortable({
   tolerance: "pointer",
   helper: "clone",
   activate: function(event) {
-    // console.log("activate", this);
+    $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag");
   },
   deactivate: function(event) {
-    // console.log("deactivate", this)
+    $(this).removeClass("dropover");
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
   over: function(event) {
-    // console.log("over", event.target);
+    $(this).addClass("dropover-active");
   },
   out: function(event) {
-    // console.log("out", event.target);
+    $(this).removeClass("dropover-active");
   },
   update: function(event) {
     tempArr = [];
@@ -267,10 +267,10 @@ $("#trash").droppable({
     ui.draggable.remove();
   },
   over: function(event, ui) {
-    console.log("over");
+    $(".bottom-trash").addClass("bottom-trash-active");
   },
   out: function(event, ui) {
-    console.log("out");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
@@ -281,4 +281,8 @@ $("#modalDueDate").datepicker({
 // load tasks for the first time
 loadTasks();
 
-
+setInterval(function() {
+  $(".card .list-group-item").each(function() {
+    auditTask($(this));
+  });
+}, (1000 * 60) * 30);
